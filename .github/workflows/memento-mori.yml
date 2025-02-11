@@ -1,5 +1,9 @@
 name: Memento Mori Reminder
 
+# Add permissions block at the top level
+permissions:
+  issues: write    # Required for creating and managing issues
+
 on:
   schedule:
     - cron: '0 10 * * *'  # Runs every day at 10 AM UTC
@@ -38,16 +42,16 @@ jobs:
             "No man is free who is not master of himself. – Epictetus"
             "The best revenge is not to be like your enemy. – Marcus Aurelius"
             "To complain is always nonproductive. Control what you can. Ignore the rest."
-            "It’s not what happens to you, but how you react to it that matters. – Epictetus"
+            "It's not what happens to you, but how you react to it that matters. – Epictetus"
             "A man is as miserable as he thinks he is. – Seneca"
             "You cannot step twice into the same river, for other waters are ever flowing onto you. – Heraclitus"
             "Even death is not to be feared by one who has lived wisely. – Buddha"
             "Time is like a river made up of events which happen, and a violent stream; for as soon as a thing has been seen, it is carried away, and another comes in its place, and this will be carried away too. – Marcus Aurelius"
-            "Every night before going to sleep, remind yourself: I have lived. If I wake up tomorrow, it’s a bonus round."
-            "One day, someone will push the last commit to your repo. Make sure you’ve done something worthwhile before that happens."
+            "Every night before going to sleep, remind yourself: I have lived. If I wake up tomorrow, it's a bonus round."
+            "One day, someone will push the last commit to your repo. Make sure you've done something worthwhile before that happens."
             "You are a tiny speck in an infinite universe. Your worries are even smaller."
-            "A person’s worth is measured by the weight of their soul, not the weight of their achievements."
-            "One day, your name will be spoken for the last time. And that’s okay."
+            "A person's worth is measured by the weight of their soul, not the weight of their achievements."
+            "One day, your name will be spoken for the last time. And that's okay."
             "The only thing you truly own is your actions. Everything else is temporary."
             "Stop waiting for motivation. Just act. The Stoics believed in action, not feelings."
             "If you lost everything today, what would truly remain? That is the essence of who you are."
