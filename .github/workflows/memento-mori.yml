@@ -1,0 +1,110 @@
+name: Memento Mori Reminder
+
+on:
+  schedule:
+    - cron: '0 10 * * *'  # Runs every day at 10 AM UTC
+    - cron: '0 12 1 1 *'  # Runs once a year on January 1st at 12 PM UTC
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  memento-mori:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Select Random Stoic Reminder
+        run: |
+          QUOTES=(
+            "You will die one day. Might as well push that commit."
+            "Memento mori: Remember, you must die."
+            "Seneca would laugh at your worries right now."
+            "Control what you can. Ignore the rest. Now get back to work."
+            "Nothing endures but change. – Heraclitus"
+            "Death smiles at us all; all we can do is smile back. – Marcus Aurelius"
+            "You have power over your mind – not outside events. Realize this, and you will find strength. – Marcus Aurelius"
+            "The happiness of your life depends upon the quality of your thoughts. – Marcus Aurelius"
+            "Waste no more time arguing what a good person should be. Be one. – Marcus Aurelius"
+            "It is not that we have a short time to live, but that we waste a lot of it. – Seneca"
+            "He who fears death will never do anything worth of a living man. – Seneca"
+            "It is not death that a man should fear, but never beginning to live. – Marcus Aurelius"
+            "You could leave life right now. Let that determine what you do and say. – Marcus Aurelius"
+            "What upsets people is not things themselves, but their judgments about these things. – Epictetus"
+            "Be tolerant with others and strict with yourself. – Marcus Aurelius"
+            "If you are distressed by anything external, it is not the thing itself that troubles you, but your judgment of it. – Marcus Aurelius"
+            "A ship should not ride on a single anchor, nor life on a single hope. – Epictetus"
+            "Don't explain your philosophy. Embody it. – Epictetus"
+            "The more we value things outside our control, the less control we have. – Epictetus"
+            "All control is self-control. Everything else is just an illusion."
+            "Difficulties strengthen the mind, as labor does the body. – Seneca"
+            "Begin at once to live, and count each separate day as a separate life. – Seneca"
+            "No man is free who is not master of himself. – Epictetus"
+            "The best revenge is not to be like your enemy. – Marcus Aurelius"
+            "To complain is always nonproductive. Control what you can. Ignore the rest."
+            "It’s not what happens to you, but how you react to it that matters. – Epictetus"
+            "A man is as miserable as he thinks he is. – Seneca"
+            "You cannot step twice into the same river, for other waters are ever flowing onto you. – Heraclitus"
+            "Even death is not to be feared by one who has lived wisely. – Buddha"
+            "Time is like a river made up of events which happen, and a violent stream; for as soon as a thing has been seen, it is carried away, and another comes in its place, and this will be carried away too. – Marcus Aurelius"
+            "Every night before going to sleep, remind yourself: I have lived. If I wake up tomorrow, it’s a bonus round."
+            "One day, someone will push the last commit to your repo. Make sure you’ve done something worthwhile before that happens."
+            "You are a tiny speck in an infinite universe. Your worries are even smaller."
+            "A person’s worth is measured by the weight of their soul, not the weight of their achievements."
+            "One day, your name will be spoken for the last time. And that’s okay."
+            "The only thing you truly own is your actions. Everything else is temporary."
+            "Stop waiting for motivation. Just act. The Stoics believed in action, not feelings."
+            "If you lost everything today, what would truly remain? That is the essence of who you are."
+            "This commit will not matter in 100 years. But your actions might."
+            "Every moment is a choice between living wisely or wasting time."
+            "Memento Mori. Not as a fear, but as a guide. Live well."
+          )
+          MESSAGE=${QUOTES[$RANDOM % ${#QUOTES[@]}]}
+          echo "RANDOM_MESSAGE=$MESSAGE" >> $GITHUB_ENV
+
+      - name: Post Daily Reminder
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const message = process.env.RANDOM_MESSAGE;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const issueTitle = "💀 Memento Mori: Daily Stoic Reminder";
+            const issueBody = `### Remember: \n\n> "${message}" \n\n _This reminder is auto-generated._`;
+
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner,
+              repo,
+              state: "open",
+              per_page: 100,
+            });
+
+            // Close the previous reminder issue if one exists
+            for (const issue of issues) {
+              if (issue.title.includes("Memento Mori")) {
+                await github.rest.issues.update({
+                  owner,
+                  repo,
+                  issue_number: issue.number,
+                  state: "closed",
+                });
+              }
+            }
+
+            // Create a new reminder issue
+            await github.rest.issues.create({
+              owner,
+              repo,
+              title: issueTitle,
+              body: issueBody,
+            });
+
+      - name: Post "Death Anniversary" Once a Year
+        if: github.event.schedule == '0 12 1 1 *'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const anniversaryMessage = `### ☠️ Today is your **Death Anniversary**. \n\n> "It is not that we have a short time to live, but that we waste a lot of it." – Seneca \n\n _Reflect on your mortality. Live wisely._`;
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: "🕯️ Memento Mori: Death Anniversary Reflection",
+              body: anniversaryMessage,
+            });
